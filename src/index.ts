@@ -29,9 +29,10 @@ export interface Node {
   tagName: string;
   attributes: Attribute[];
   contents: NodeContent[];
+  noClose?: true;
 }
 
-export function textContent (nodeContent: NodeContent): string {
+export function outerHtml (nodeContent: NodeContent): string {
   if (typeof nodeContent === 'string') {
     return nodeContent;
   }
@@ -50,8 +51,12 @@ export function textContent (nodeContent: NodeContent): string {
           .join(' ');
   if ('tagName' in nodeContent) {
     const tag = nodeContent;
-    const innerHTML = tag.contents.map((x) => textContent(x)).join('');
-    return `<${tag.tagName}${attr}>${innerHTML}</${tag.tagName}>`;
+    const innerHTML = tag.contents.map((x) => outerHtml(x)).join('');
+    let outerHTML = `<${tag.tagName}${attr}>`;
+    if (!tag.noClose) {
+      outerHTML += `${innerHTML}</${tag.tagName}>`;
+    }
+    return outerHTML;
   } else {
     const command = nodeContent;
     return `<!${command.commandName}${attr}>`;
@@ -109,6 +114,7 @@ function parseHtmlCommand (
   offset = parseSpace(text, offset);
   let attributes: Attribute[];
   [attributes, offset] = parseHtmlAttributes(text, offset);
+  offset = parseExact('>', text, offset);
   const node = context.onCommand(commandName, attributes);
   return [[node], offset];
   if (commandName.toUpperCase() === 'DOCTYPE') {
@@ -286,12 +292,33 @@ class ParserContext {
     };
     this.pushNodeContent(node);
     this.stack.push(node);
+    switch (tagName.toLowerCase()) {
+      case 'meta':
+      case 'base':
+      case 'img':
+      case 'br':
+      case 'hr':
+        node.noClose = true;
+        this.onCloseTag(tagName);
+        break;
+    }
     return node;
   }
 
-  onCloseTag (name: string) {
-    const top = this.stack.pop();
-
+  onCloseTag (tagName: string) {
+    let top = this.stack.pop();
+    for (; top && top.tagName.toUpperCase() !== tagName.toUpperCase(); ) {
+      top = this.stack.pop();
+    }
+    if (!top) {
+      console.warn(`closing tag '${tagName}' but it is not opened`);
+      const node: Node = {
+        tagName,
+        contents: [],
+        attributes: [],
+      };
+      this.pushNodeContent(node);
+    }
     return top;
   }
 

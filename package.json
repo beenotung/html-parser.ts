@@ -1,17 +1,17 @@
 {
   "name": "html-parser",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.0",
+  "description": "html parser for node.js and browser",
   "main": "index.js",
   "scripts": {
-    "format":"prettier --write \"src/**/*.ts\"",
-    "postformat":"tslint -p . --fix",
-    "pretest":"npm run format",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "postformat": "tslint -p . --fix",
+    "pretest": "npm run format",
     "test": "ts-node test/index.ts examples/min.html"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Beeno Tung",
+  "license": "BSD-2-Clause",
   "devDependencies": {
     "@types/node": "^10.9.2",
     "prettier": "^1.14.2",
@@ -19,5 +19,65 @@
     "tslint": "^5.11.0",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.0.1"
-  }
+  },
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "dependencies": {
+    "ansi-regex": "^2.1.1",
+    "ansi-styles": "^3.2.1",
+    "arrify": "^1.0.1",
+    "balanced-match": "^1.0.0",
+    "babel-code-frame": "^6.26.0",
+    "buffer-from": "^1.1.1",
+    "chalk": "^2.4.1",
+    "color-convert": "^1.9.3",
+    "brace-expansion": "^1.1.11",
+    "color-name": "^1.1.3",
+    "commander": "^2.17.1",
+    "diff": "^3.5.0",
+    "concat-map": "^0.0.1",
+    "esprima": "^4.0.1",
+    "escape-string-regexp": "^1.0.5",
+    "argparse": "^1.0.10",
+    "esutils": "^1.1.6",
+    "fs.realpath": "^1.0.0",
+    "glob": "^7.1.3",
+    "has-flag": "^3.0.0",
+    "inflight": "^1.0.6",
+    "inherits": "^2.0.3",
+    "js-tokens": "^3.0.2",
+    "js-yaml": "^3.12.0",
+    "make-error": "^1.3.4",
+    "minimatch": "^3.0.4",
+    "minimist": "^1.2.0",
+    "once": "^1.4.0",
+    "mkdirp": "^0.5.1",
+    "has-ansi": "^2.0.0",
+    "doctrine": "^0.7.2",
+    "path-is-absolute": "^1.0.1",
+    "resolve": "^1.8.1",
+    "builtin-modules": "^1.1.1",
+    "semver": "^5.5.1",
+    "source-map-support": "^0.5.9",
+    "source-map": "^0.6.1",
+    "strip-ansi": "^3.0.1",
+    "supports-color": "^5.5.0",
+    "tslib": "^1.9.3",
+    "tsutils": "^2.29.0",
+    "wrappy": "^1.0.2",
+    "yn": "^2.0.0",
+    "path-parse": "^1.0.6",
+    "sprintf-js": "^1.0.3",
+    "isarray": "^0.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/beenotung/html-parser.git"
+  },
+  "bugs": {
+    "url": "https://github.com/beenotung/html-parser/issues"
+  },
+  "homepage": "https://github.com/beenotung/html-parser#readme"
 }
