@@ -13,9 +13,9 @@ parseFile(filename).then(res => {
   let fileText = fs.readFileSync(filename).toString();
   let match = parsedText == fileText;
   console.log({
+    match,
     file_len: fileText.length,
     parsed_len: parsedText.length,
-    match,
     line: {f: fileText.split('\n').length, p: parsedText.split('\n').length},
     head: {f: fileText[0], p: parsedText[0]},
     tail: {f: fileText[fileText.length - 1], p: parsedText[parsedText.length - 1]},

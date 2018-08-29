@@ -298,6 +298,12 @@ class ParserContext {
       case 'img':
       case 'br':
       case 'hr':
+      case 'wbr':
+      case 'link':
+      case 'input':
+      case 'keygen':
+      case 'source':
+      case 'track':
         node.noClose = true;
         this.onCloseTag(tagName);
         break;
