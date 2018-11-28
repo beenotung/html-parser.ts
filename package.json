@@ -2,18 +2,20 @@
   "name": "html-parser",
   "version": "0.0.0",
   "description": "html parser for node.js and browser",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\"",
     "postformat": "tslint -p . --fix",
     "pretest": "npm run format",
+    "build": "tsc",
     "test": "ts-node test/index.ts examples/min.html"
   },
   "keywords": [],
   "author": "Beeno Tung",
   "license": "BSD-2-Clause",
   "devDependencies": {
-    "@types/node": "^10.9.2",
+    "@types/node": "^8.10.38",
     "prettier": "^1.14.2",
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
