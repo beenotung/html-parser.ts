@@ -1,6 +1,6 @@
 {
-  "name": "html-parser",
-  "version": "0.0.0",
+  "name": "@beenotung/html-parser",
+  "version": "0.0.1",
   "description": "html parser for node.js and browser",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -26,8 +26,7 @@
     "example": "examples",
     "test": "test"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/beenotung/html-parser.git"
