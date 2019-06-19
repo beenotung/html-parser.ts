@@ -1,3 +1,10 @@
 .idea/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
 examples/
 !dist/
+.last
+in.html
+out.html
+log.html
