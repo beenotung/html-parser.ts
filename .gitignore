@@ -3,3 +3,7 @@ package-lock.json
 yarn.lock
 pnpm-lock.yaml
 dist/
+.last
+in.html
+out.html
+log.html

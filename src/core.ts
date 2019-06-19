@@ -711,6 +711,7 @@ export function hasElementByTagName (node: Node, tagName: string): boolean {
     (node.childNodes && node.childNodes.some((node) => f(node)));
   return f(node);
 }
+
 /**
  * including the given node
  * */
@@ -860,7 +861,6 @@ abstract class DSLElement extends HTMLElement {
 
   clone (): this {
     const node = newObject(this);
-    console.log('clone DSL', this);
     node.textContent = this.textContent;
     node.childNodes = node.childNodes
       ? this.childNodes.slice()
@@ -980,12 +980,12 @@ class Script extends DSLElement {
         }
         case '"':
         case "'": {
-          const { res, data } = parseString(html, c);
+          const { res, data } = parseString(html.substr(i), c);
           acc += data;
           return { res };
         }
         case '`': {
-          const { res, data } = parseStringWithDashQuote(html);
+          const { res, data } = parseStringWithDashQuote(html.substr(i));
           acc += data;
           return { res };
         }
@@ -1005,12 +1005,19 @@ class Script extends DSLElement {
 }
 
 function parseStringWithDashQuote (html: string): ParseResult<string> {
-  assert(html[0] === '`', 'expect string with dash quote starting quote');
+  assert(
+    html[0] === '`',
+    new Error('expect string with dash quote starting quote'),
+  );
   let acc = '';
   const { res } = forChar(html.substr(1), (c, i, html) => {
     if (c === '$' && html[i + 1] === '{') {
-      const { res, data } = parseScriptBody(html.substr(2), '}');
-      acc += '$' + data;
+      const { res, data } = parseScriptBody(html.substr(i + 2), '}');
+      acc += '${' + data;
+      if (res[0] === '}') {
+        acc += '}';
+        return { res: res.substr(1) };
+      }
       return { res };
     }
     if (c === '`') {
@@ -1036,7 +1043,7 @@ function parseScriptBody (
         return { res };
       }
       case '`': {
-        const { res, data } = parseStringWithDashQuote(html);
+        const { res, data } = parseStringWithDashQuote(html.substr(i));
         acc += data;
         return { res };
       }
@@ -1189,7 +1196,10 @@ function parse<T extends Node> (
   return res;
 }
 
-export function parseHtmlDocument (html: string, skipTrim = false): Document {
+export function parseHtmlDocument (
+  html: string,
+  skipTrim = false,
+): { root: Document; fullyParsed: boolean } {
   if (!skipTrim) {
     // to escape 5 leading 0xFEFF
     html = html.trimLeft();
@@ -1210,11 +1220,10 @@ export function parseHtmlDocument (html: string, skipTrim = false): Document {
         p(Text);
     }
   }
-  if (html.length !== 0) {
-    console.error('not fully parsed html string');
-  }
-  return root;
+  return { root, fullyParsed: html.length === 0 };
 }
+
+/**@deprecated*/
 export let parseHtml = parseHtmlDocument;
 
 /* for debug */

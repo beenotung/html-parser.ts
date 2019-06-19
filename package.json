@@ -9,7 +9,7 @@
     "postformat": "tslint -p . --fix",
     "pretest": "npm run format",
     "build": "tsc",
-    "test": "ts-node test/index.ts examples/min.html"
+    "test": "ts-node test/cli.ts examples/min.html"
   },
   "keywords": [],
   "author": "Beeno Tung",

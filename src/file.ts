@@ -1,15 +1,11 @@
 import * as fs from 'fs';
-import { parseHtml } from './core';
+import * as util from 'util';
+import { parseHtmlDocument } from './core';
 
-export function parseFile (filename: string, skipTrim = false) {
-  console.log('parseFile:', { filename });
-  return new Promise<string>((resolve, reject) => {
-    fs.readFile(filename, (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data.toString());
-      }
-    });
-  }).then((text) => parseHtml(text, skipTrim));
+const readFile = util.promisify(fs.readFile);
+
+export async function parseFile (filename: string, skipTrim = false) {
+  const bin = await readFile(filename);
+  const html = bin.toString();
+  return parseHtmlDocument(html, skipTrim);
 }
