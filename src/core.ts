@@ -1196,10 +1196,7 @@ function parse<T extends Node> (
   return res;
 }
 
-export function parseHtmlDocument (
-  html: string,
-  skipTrim = false,
-): { root: Document; fullyParsed: boolean } {
+export function parseHtmlDocument (html: string, skipTrim = false): Document {
   if (!skipTrim) {
     // to escape 5 leading 0xFEFF
     html = html.trimLeft();
@@ -1220,7 +1217,7 @@ export function parseHtmlDocument (
         p(Text);
     }
   }
-  return { root, fullyParsed: html.length === 0 };
+  return root;
 }
 
 /**@deprecated*/

@@ -1,15 +1,12 @@
-import { parseFile } from '../src';
 import * as fs from 'fs';
 import * as util from 'util';
+import { parseFile } from '../src';
 
 let writeFile = util.promisify(fs.writeFile);
 let readFile = util.promisify(fs.readFile);
 
 export async function test(filename: string) {
-  let { root, fullyParsed } = await parseFile(filename);
-  if (!fullyParsed) {
-    console.error('html not fully parsed');
-  }
+  let root = await parseFile(filename);
   let parsedText = root.outerHTML;
   // console.log(parsedText);
   let fileText = (await readFile(filename)).toString();
