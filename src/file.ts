@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { parseHtml } from './core';
 
-export function parseFile (filename: string) {
+export function parseFile (filename: string, skipTrim = false) {
   console.log('parseFile:', { filename });
   return new Promise<string>((resolve, reject) => {
     fs.readFile(filename, (err, data) => {
@@ -11,5 +11,5 @@ export function parseFile (filename: string) {
         resolve(data.toString());
       }
     });
-  }).then((text) => parseHtml(text, 0));
+  }).then((text) => parseHtml(text, skipTrim));
 }
