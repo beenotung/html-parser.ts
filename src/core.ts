@@ -1139,7 +1139,6 @@ function parseScriptBody (
           }
         }
         // not comment nor regex
-        console.log('not comment:', { c, head: html.substr(i, 20) });
         acc += c;
         break;
       }
