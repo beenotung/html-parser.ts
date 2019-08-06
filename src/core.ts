@@ -117,6 +117,9 @@ function forChar (
 
 function assert (b: boolean, error) {
   if (!b) {
+    if (typeof error === 'string') {
+      throw new Error(error);
+    }
     throw error;
   }
 }
