@@ -23,7 +23,11 @@ handle: parse and encode
 - [ ] auto fix not properly closed elements*, e.g. li, td
 - [x] style
 - [x] script
+  - [x] regex
 - [x] svg
+- [x] extra string quote in attr*
+
+extra string quote in attr*: e.g. <li class=" my-class"">
 
 ### auto fix not properly closed element
 ```

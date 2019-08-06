@@ -357,6 +357,7 @@ export class Attributes extends Node {
           return 'stop';
         default: {
           let attr: Attr;
+          // TODO remove this extra bracket level
           {
             html = html.substr(i);
             switch (html[0]) {
@@ -366,7 +367,14 @@ export class Attributes extends Node {
                 attr = {
                   name: data,
                 };
-                html = res;
+                // check extra string quote
+                if (res[0] === html[0]) {
+                  // extra string quote, e.g.:
+                  // <li class=" visible-country-us"">
+                  html = res.substr(1);
+                } else {
+                  html = res;
+                }
                 break;
               }
               default: {
@@ -378,13 +386,28 @@ export class Attributes extends Node {
               }
             }
           }
+          attributes.attrs.push(attr);
           if (html[0] === '=') {
             html = html.substr(1);
             const { res, data } = parseAttrValue(html);
             attr.value = data;
-            html = res;
+            // check extra string quote
+            switch (html[0]) {
+              case '"':
+              case "'":
+                if (res[0] === html[0]) {
+                  // extra string quote, e.g.:
+                  // <li class=" visible-country-us"">
+                  attributes.attrs.push(res[0]);
+                  html = res.substr(1);
+                } else {
+                  html = res;
+                }
+                break;
+              default:
+                html = res;
+            }
           }
-          attributes.attrs.push(attr);
           return { res: html };
         }
       }
@@ -480,7 +503,7 @@ export function isAnyTagName (node: Node, tagNames: string[]): boolean {
 export class HTMLElement extends Node {
   tagName: string;
   noBody?: boolean;
-  attributes: Attributes;
+  attributes?: Attributes;
   /* auto repair */
   notClosed = true;
   extraClosing?: boolean;
@@ -1084,6 +1107,39 @@ function parseScriptBody (
           acc += '/*' + html.substring(0, end) + '*/';
           return { res: html.substring(end + 2) };
         }
+        // detect regex
+        {
+          let nextSlash = i + 1;
+          for (; nextSlash < html.length; ) {
+            if (html[nextSlash] === '/') {
+              break;
+            }
+            if (html[nextSlash] === '\\') {
+              nextSlash += 2;
+            } else {
+              nextSlash++;
+            }
+          }
+          if (nextSlash !== -1 && nextSlash < html.length) {
+            const end = nextSlash + 1;
+            const regexp = html.substring(i, end);
+            try {
+              // tslint:disable:no-eval
+              // TODO parse regex instead of using eval
+              const x = eval(regexp);
+              // tslint:enable:no-eval
+              if (x instanceof RegExp) {
+                acc += regexp;
+                return { res: html.substr(end) };
+              }
+              // not regex
+            } catch (e) {
+              // not regex
+            }
+          }
+        }
+        // not comment nor regex
+        console.log('not comment:', { c, head: html.substr(i, 20) });
         acc += c;
         break;
       }
