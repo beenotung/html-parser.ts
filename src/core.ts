@@ -359,11 +359,24 @@ export class Attributes extends Node {
           let attr: Attr;
           {
             html = html.substr(i);
-            const { res, data } = parseAttrName(html);
-            attr = {
-              name: data,
-            };
-            html = res;
+            switch (html[0]) {
+              case '"':
+              case "'": {
+                const { res, data } = parseString(html, html[0]);
+                attr = {
+                  name: data,
+                };
+                html = res;
+                break;
+              }
+              default: {
+                const { res, data } = parseAttrName(html);
+                attr = {
+                  name: data,
+                };
+                html = res;
+              }
+            }
           }
           if (html[0] === '=') {
             html = html.substr(1);
