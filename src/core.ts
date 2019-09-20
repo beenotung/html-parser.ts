@@ -424,6 +424,9 @@ function noBody (tagName: string) {
     case 'img':
     case 'link':
     case 'base':
+    // inside object
+    case 'param':
+    case 'embed':
       return true;
     default:
       return false;
