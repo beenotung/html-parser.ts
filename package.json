@@ -1,6 +1,6 @@
 {
   "name": "@beenotung/html-parser",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "html parser for node.js and browser",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
