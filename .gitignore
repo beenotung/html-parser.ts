@@ -7,3 +7,4 @@ dist/
 in.html
 out.html
 log.html
+*.tgz

@@ -4,6 +4,10 @@
   "description": "html parser for node.js and browser",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "src",
+    "dist"
+  ],
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\"",
     "postformat": "tslint -p . --fix",
@@ -22,10 +26,6 @@
     "tslint": "^5.11.0",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.0.1"
-  },
-  "directories": {
-    "example": "examples",
-    "test": "test"
   },
   "dependencies": {},
   "repository": {
