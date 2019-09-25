@@ -523,6 +523,13 @@ export class HTMLElement extends Node {
     return node;
   }
 
+  get innerHTML (): string {
+    if (!this.childNodes) {
+      return '';
+    }
+    return this.childNodes.reduce((acc, c) => acc + c.outerHTML, '');
+  }
+
   get outerHTML (): string {
     if (this.extraClosing) {
       return (
