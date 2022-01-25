@@ -13,7 +13,7 @@ And I found some simple libraries that is too low level, requiring user to handl
 
 ## Core Progress
 
-handle: parse and encode
+Parse and encode html document / fragment:
 
 - [x] text
 - [x] normal element
@@ -27,9 +27,9 @@ handle: parse and encode
 - [x] svg
 - [x] extra string quote in attr*
 
-extra string quote in attr*: e.g. <li class=" my-class"">
+Auto recover from extra string quote in attr*: e.g. `<li class=" my-class"">`
 
-### auto fix not properly closed element
+### Auto fix not properly closed element
 ```
 when unexpected closing tag is saw
 
