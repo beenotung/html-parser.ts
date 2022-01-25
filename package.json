@@ -20,7 +20,8 @@
     "parser",
     "dom",
     "server-side",
-    "isomorphic"
+    "isomorphic",
+    "typescript"
   ],
   "author": "Beeno Tung",
   "license": "BSD-2-Clause",
