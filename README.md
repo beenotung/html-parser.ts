@@ -11,6 +11,98 @@ I found many complicated libraries that don't work for me.
 And I found some simple libraries that is too low level, requiring user to handle open and close of element.
 (That looks like tokenizer (higher level though) than a parser.)
 
+## Typescript Signature (Named Exported Library)
+
+Details refer to [core.ts](./src/core.ts) on Github repo or `@beenotung/html-parser/dist/core.d.ts` on npm package.
+
+### Main Functions
+```typescript
+function parseHtmlDocument (html: string, skipTrim?: boolean): Document;
+function parseFile     (filename: string, skipTrim?: boolean): Promise<Document>;
+
+function walkNode         (node: Node, f: (node: Node, parent: Node, idx: number) => void, parent?: Node, idx?: number): void;
+function walkNodeReversed (node: Node, f: (node: Node, parent: Node, idx: number) => void, parent?: Node): void;
+
+function isTagName    (node: Node, tagName : string  ): boolean;
+function isAnyTagName (node: Node, tagNames: string[]): boolean;
+
+/** including the given node */
+function getElementByTagName    (node: Node, tagName: string): HTMLElement | undefined;
+/** including the given node */
+function getElementsByTagName   (node: Node, tagName: string): HTMLElement[];
+/** including the given node */
+function hasElementByTagName    (node: Node, tagName: string): boolean;
+/** including the given node */
+function hasElementByAnyTagName (node: Node, tagNames: string[]): boolean;
+```
+
+### Main Classes
+```typescript
+abstract class Node {
+    abstract outerHTML: string;
+    abstract minifiedOuterHTML: string;
+    childNodes?: Node[];
+    forEachChildNode(f: (node: Node, idx: number, childNodes: Node[]) => void): void;
+    abstract clone(): this;
+}
+class Text extends Node {}
+interface Attr {
+    name: string;
+    value?: string;
+}
+class Attributes extends Node {
+    attrs: Array<Attr | string>;
+    forEachAttr(f: (attr: Attr) => void): void;
+    hasName(name: string): boolean;
+    getValue(name: string): string | undefined;
+}
+class HTMLElement extends Node {
+    tagName: string;
+    noBody?: boolean;
+    attributes?: Attributes;
+    notClosed: boolean;
+    extraClosing?: boolean;
+    innerHTML: string;
+    /** @param tagName assume to be in lower case */
+    isTagName(tagName: string): boolean;
+    /** @param tagNames assume to be in lower case */
+    isAnyTagName(tagNames: string[]): boolean;
+    hasText(): boolean;
+    /** not including this element */
+    getElementsByTagName(tagName: string): HTMLElement[];
+    /** not including this element */
+    hasElementByTagName(tagName: string): boolean;
+    /** not including this element */
+    hasElementByAnyTagName(tagNames: string[]): boolean;
+}
+class Command extends HTMLElement {}
+class Comment extends Command {
+    tagName: string;
+    content: string;
+}
+abstract class DSLElement extends HTMLElement {
+    textContent: string;
+    abstract minifiedTextContent: string;
+}
+class Style extends DSLElement {}
+class Script extends DSLElement {}
+class Document extends Node {
+    childNodes: Node[];
+}
+// for easy reference
+let NodeClasses = [
+  Text,
+  Attributes,
+  HTMLElement,
+  Command,
+  Comment,
+  DSLElement,
+  Style,
+  Script,
+  Document,
+];
+```
+
 ## Core Progress
 
 Parse and encode html document / fragment:
