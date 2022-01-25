@@ -716,7 +716,7 @@ export class HTMLElement extends Node {
 }
 
 /**
- * including this node
+ * including the given node
  * */
 export function getElementByTagName (
   node: Node,
