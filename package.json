@@ -15,7 +15,13 @@
     "prepublishOnly": "npm run build",
     "test": "ts-node test/index.ts"
   },
-  "keywords": [],
+  "keywords": [
+    "html",
+    "parser",
+    "dom",
+    "server-side",
+    "isomorphic"
+  ],
   "author": "Beeno Tung",
   "license": "BSD-2-Clause",
   "devDependencies": {
