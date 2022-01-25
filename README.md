@@ -1,7 +1,7 @@
 # @beenotung/html-parser
 [![npm Package Version](https://img.shields.io/npm/v/@beenotung/html-parser.svg?maxAge=2592000)](https://www.npmjs.com/package/@beenotung/html-parser)
 
-The zero-dependency parser for html that return the dom (tree) structure.
+The zero-dependency html parser for node.js and browser that return the dom (tree) structure.
 
 ## Why @beenotung/html-parser
 I tried to find a html parser for node.js.
