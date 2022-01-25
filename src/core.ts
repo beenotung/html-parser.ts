@@ -904,7 +904,7 @@ function parseStyleBody (
   return { res, data: acc };
 }
 
-abstract class DSLElement extends HTMLElement {
+export abstract class DSLElement extends HTMLElement {
   textContent: string;
   abstract minifiedTextContent: string;
 
@@ -944,7 +944,7 @@ abstract class DSLElement extends HTMLElement {
   }
 }
 
-class Style extends DSLElement {
+export class Style extends DSLElement {
   get minifiedTextContent (): string {
     let acc = '';
     forChar(this.textContent, (c, i, html) => {
@@ -1003,7 +1003,7 @@ function continueParseStyleFromHTMLElement (
   return { res: html, data: style };
 }
 
-class Script extends DSLElement {
+export class Script extends DSLElement {
   get minifiedTextContent (): string {
     let acc = '';
     forChar(this.textContent, (c, i, html) => {
