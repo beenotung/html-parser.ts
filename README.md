@@ -41,6 +41,7 @@ function hasElementByAnyTagName (node: Node, tagNames: string[]): boolean;
 abstract class Node {
     abstract outerHTML: string;
     abstract minifiedOuterHTML: string;
+    abstract textContent: string | null;
     childNodes?: Node[];
     forEachChildNode(f: (node: Node, idx: number, childNodes: Node[]) => void): void;
     abstract clone(): this;
@@ -52,6 +53,7 @@ interface Attr {
 }
 class Attributes extends Node {
     attrs: Array<Attr | string>;
+    textContent: null;
     forEachAttr(f: (attr: Attr) => void): void;
     hasName(name: string): boolean;
     getValue(name: string): string | undefined;
@@ -62,6 +64,7 @@ class HTMLElement extends Node {
     attributes?: Attributes;
     notClosed: boolean;
     extraClosing?: boolean;
+    textContent: string;
     innerHTML: string;
     /** @param tagName assume to be in lower case */
     isTagName(tagName: string): boolean;
