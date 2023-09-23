@@ -970,7 +970,8 @@ export class Style extends DSLElement {
         default: {
           if (
             c.trim().length !== 0 ||
-            (acc.length === 0 || acc[acc.length - 1].trim().length !== 0)
+            acc.length === 0 ||
+            acc[acc.length - 1].trim().length !== 0
           ) {
             acc += c;
           }
