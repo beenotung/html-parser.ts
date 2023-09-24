@@ -16,6 +16,7 @@ interface ParseResult<T> {
 export abstract class Node {
   abstract outerHTML: string;
   abstract minifiedOuterHTML: string;
+  abstract textContent: string | null;
   childNodes?: Node[];
 
   forEachChildNode (f: (node: Node, idx: number, childNodes: Node[]) => void) {
@@ -142,6 +143,10 @@ export class Text extends Node {
 
   get minifiedOuterHTML (): string {
     return trimText(this.outerHTML);
+  }
+
+  get textContent (): string {
+    return this.outerHTML;
   }
 
   static parse (html: string): ParseResult<Text> {
@@ -299,6 +304,8 @@ export interface Attr {
 export class Attributes extends Node {
   // to preserve spaces
   attrs: Array<Attr | string> = [];
+
+  textContent: null = null;
 
   clone (): this {
     const node = newObject(this);
@@ -624,6 +631,14 @@ export class HTMLElement extends Node {
       html += `</${this.tagName}>`;
     }
     return html;
+  }
+
+  get textContent (): string {
+    let text = '';
+    if (this.childNodes) {
+      this.childNodes.forEach((node) => (text += node.textContent));
+    }
+    return text;
   }
 
   /**
@@ -960,16 +975,12 @@ function parseStyleBody (
 }
 
 export abstract class DSLElement extends HTMLElement {
-  textContent: string;
-  abstract minifiedTextContent: string;
+  get textContent (): string {
+    return this._textContent;
+  }
 
-  clone (): this {
-    const node = newObject(this);
-    node.textContent = this.textContent;
-    node.childNodes = node.childNodes
-      ? this.childNodes.slice()
-      : this.childNodes;
-    return node;
+  set textContent (value: string) {
+    this._textContent = value;
   }
 
   get outerHTML (): string {
@@ -996,6 +1007,17 @@ export abstract class DSLElement extends HTMLElement {
     html += this.minifiedTextContent;
     html += `</${this.tagName}>`;
     return html;
+  }
+  abstract minifiedTextContent: string;
+  private _textContent: string;
+
+  clone (): this {
+    const node = newObject(this);
+    node.textContent = this.textContent;
+    node.childNodes = node.childNodes
+      ? this.childNodes.slice()
+      : this.childNodes;
+    return node;
   }
 }
 
@@ -1278,6 +1300,10 @@ export class Document extends Node {
 
   get minifiedOuterHTML (): string {
     return this.childNodes.map((node) => node.minifiedOuterHTML).join('');
+  }
+
+  get textContent (): string {
+    return this.childNodes.map((node) => node.textContent).join('');
   }
 
   static parse (html: string): ParseResult<Node> {
