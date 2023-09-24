@@ -6,9 +6,9 @@ The zero-dependency html parser for node.js and browser that return the dom (tre
 ## Why @beenotung/html-parser
 I tried to find a html parser for node.js.
 
-I found many complicated libraries that don't work for me.
+I found many complicated libraries that were matching my need.
 
-And I found some simple libraries that is too low level, requiring user to handle open and close of element.
+And I found some simple libraries that were too low level, requiring user to handle open and close of element.
 (That looks like tokenizer (higher level though) than a parser.)
 
 ## Typescript Signature (Named Exported Library)
