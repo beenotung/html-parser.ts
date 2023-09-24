@@ -57,6 +57,7 @@ class Attributes extends Node {
     attrs: Array<Attr | string>;
     textContent: null;
     forEachAttr(f: (attr: Attr) => void): void;
+    toObject(): Record<string, string>
     hasName(name: string): boolean;
     getValue(name: string): string | undefined;
 }

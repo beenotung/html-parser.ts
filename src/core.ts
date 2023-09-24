@@ -364,6 +364,14 @@ export class Attributes extends Node {
     });
   }
 
+  toObject (): Record<string, string> {
+    const attrs: Record<string, string> = {};
+    this.forEachAttr((attr) => {
+      attrs[attr.name] = attr.value;
+    });
+    return attrs;
+  }
+
   hasName (name: string): boolean {
     return this.attrs.some(
       (attr) => typeof attr === 'object' && attr.name === name,
