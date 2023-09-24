@@ -20,7 +20,8 @@ Details refer to [core.ts](./src/core.ts) on Github repo or `html-parser.ts/dist
 function parseHtmlDocument (html: string, skipTrim?: boolean): Document;
 function parseFile     (filename: string, skipTrim?: boolean): Promise<Document>;
 
-function walkNode         (node: Node, f: (node: Node, parent: Node, idx: number) => void, parent?: Node, idx?: number): void;
+type WalkResult = unknown | 'skip_child';
+function walkNode         (node: Node, f: (node: Node, parent: Node, idx: number) => void, parent?: Node, idx?: number): WalkResult;
 function walkNodeReversed (node: Node, f: (node: Node, parent: Node, idx: number) => void, parent?: Node): void;
 
 function isTagName    (node: Node, tagName : string  ): boolean;

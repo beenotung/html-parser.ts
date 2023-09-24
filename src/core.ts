@@ -41,14 +41,16 @@ const dev = console.log.bind(console, '[parser]');
 
 /* tslint:enable:no-unused-variable */
 
+export type WalkResult = unknown | 'skip_child';
+
 export function walkNode (
   node: Node,
-  f: (node: Node, parent: Node, idx: number) => void,
+  f: (node: Node, parent: Node, idx: number) => WalkResult,
   parent = node,
   idx = -1,
 ) {
-  f(node, parent, idx);
-  if (node.childNodes) {
+  const res = f(node, parent, idx);
+  if (res !== 'skip_child' && node.childNodes) {
     node.childNodes.forEach((child, idx) => walkNode(child, f, node, idx));
   }
 }
