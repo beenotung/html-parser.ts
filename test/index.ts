@@ -5,4 +5,5 @@ testAll([
   'examples/list.html',
   'examples/xhtml.html',
   'examples/extra-string-quote.html',
+  'examples/multi-line-element.html',
 ]);

@@ -176,6 +176,9 @@ function parseTagName (html: string): ParseResult<string> {
     switch (c) {
       case '>':
       case ' ':
+      case '\t':
+      case '\r':
+      case '\n':
         return 'stop';
       default:
         name += c;
@@ -190,6 +193,9 @@ function parseAttrName (html: string): ParseResult<string> {
     switch (c) {
       case '=':
       case ' ':
+      case '\t':
+      case '\r':
+      case '\n':
       case '/':
       case '>':
         return 'stop';
@@ -228,6 +234,32 @@ function parseString (html: string, deliminator: string): ParseResult<string> {
   return { res: res.substr(1), data: acc };
 }
 
+function parseAttrWhitespace (html: string): ParseResult<string> {
+  const c = html[0];
+  switch (c) {
+    case ' ':
+    case '\t':
+    case '\r':
+    case '\n':
+      let acc = c;
+      const { res } = forChar(html.substr(1), (c, i, html) => {
+        switch (c) {
+          case ' ':
+          case '\t':
+          case '\r':
+          case '\n':
+            acc += c;
+            break;
+          default:
+            return 'stop';
+        }
+      });
+      return { res, data: acc };
+    default:
+      return { res: html, data: '' };
+  }
+}
+
 function parseAttrValue (html: string): ParseResult<string> {
   const c = html[0];
   switch (c) {
@@ -259,6 +291,8 @@ function parseAttrValue (html: string): ParseResult<string> {
 
 export interface Attr {
   name: string;
+  extraAfterName?: string;
+  extraBeforeValue?: string;
   value?: string;
 }
 
@@ -283,10 +317,17 @@ export class Attributes extends Node {
         html += space;
       } else {
         const attr: Attr = attrOrSpace;
-        const { name, value } = attr;
+        const { name, extraAfterName, extraBeforeValue, value } = attr;
         html += name;
+        if (typeof extraAfterName === 'string') {
+          html += extraAfterName;
+        }
         if (typeof value === 'string') {
-          html += '=' + value;
+          html += '=';
+          if (typeof extraBeforeValue === 'string') {
+            html += extraBeforeValue;
+          }
+          html += value;
         }
       }
     });
@@ -349,6 +390,8 @@ export class Attributes extends Node {
     const { res } = forChar(html, (c, i, html) => {
       switch (c) {
         case ' ':
+        case '\t':
+        case '\r':
         case '\n':
           attributes.attrs.push(c);
           break;
@@ -387,8 +430,20 @@ export class Attributes extends Node {
             }
           }
           attributes.attrs.push(attr);
+          if (html[0] !== '=') {
+            const whitespace = parseAttrWhitespace(html);
+            if (whitespace.data) {
+              attr.extraAfterName = whitespace.data;
+              html = whitespace.res;
+            }
+          }
           if (html[0] === '=') {
             html = html.substr(1);
+            const whitespace = parseAttrWhitespace(html);
+            if (whitespace.data) {
+              attr.extraBeforeValue = whitespace.data;
+              html = whitespace.res;
+            }
             const { res, data } = parseAttrValue(html);
             attr.value = data;
             // check extra string quote
