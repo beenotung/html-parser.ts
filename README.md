@@ -49,6 +49,8 @@ abstract class Node {
 class Text extends Node {}
 interface Attr {
     name: string;
+    extraAfterName?: string;
+    extraBeforeValue?: string;
     value?: string;
 }
 class Attributes extends Node {
