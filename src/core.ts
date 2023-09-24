@@ -577,6 +577,7 @@ export function isAnyTagName (node: Node, tagNames: string[]): boolean {
 
 export class HTMLElement extends Node {
   tagName: string;
+  parentElement?: HTMLElement;
   noBody?: boolean;
   attributes?: Attributes;
   /* auto repair */
@@ -589,9 +590,14 @@ export class HTMLElement extends Node {
     node.noBody = this.noBody;
     node.attributes = this.attributes.clone();
     node.notClosed = this.notClosed;
-    node.childNodes = node.childNodes
-      ? this.childNodes.slice()
-      : this.childNodes;
+    if (this.childNodes) {
+      node.childNodes = this.childNodes.map((child) => {
+        if (child instanceof HTMLElement) {
+          child.parentElement = node;
+        }
+        return child;
+      });
+    }
     return node;
   }
 
@@ -789,6 +795,11 @@ export class HTMLElement extends Node {
         const { res, data } = parse(Text, html);
         node.childNodes.push(data);
         html = res;
+      }
+    }
+    for (const child of node.childNodes) {
+      if (child instanceof HTMLElement) {
+        child.parentElement = node;
       }
     }
     return { res: html, data: node };

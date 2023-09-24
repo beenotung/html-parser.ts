@@ -64,6 +64,7 @@ class Attributes extends Node {
 }
 class HTMLElement extends Node {
     tagName: string;
+    parentElement?: HTMLElement;
     noBody?: boolean;
     attributes?: Attributes;
     notClosed: boolean;
