@@ -1,9 +1,9 @@
-# @beenotung/html-parser
-[![npm Package Version](https://img.shields.io/npm/v/@beenotung/html-parser.svg?maxAge=2592000)](https://www.npmjs.com/package/@beenotung/html-parser)
+# html-parser.ts
+[![npm Package Version](https://img.shields.io/npm/v/html-parser.ts.svg?maxAge=2592000)](https://www.npmjs.com/package/html-parser.ts)
 
-The zero-dependency html parser for node.js and browser that return the dom (tree) structure.
+The zero-dependency robust and fast html parser for node.js and browser that return the dom (tree) structure.
 
-## Why @beenotung/html-parser
+## Why html-parser.ts
 I tried to find a html parser for node.js.
 
 I found many complicated libraries that were matching my need.
@@ -13,7 +13,7 @@ And I found some simple libraries that were too low level, requiring user to han
 
 ## Typescript Signature (Named Exported Library)
 
-Details refer to [core.ts](./src/core.ts) on Github repo or `@beenotung/html-parser/dist/core.d.ts` on npm package.
+Details refer to [core.ts](./src/core.ts) on Github repo or `html-parser.ts/dist/core.d.ts` on npm package.
 
 ### Main Functions
 ```typescript
