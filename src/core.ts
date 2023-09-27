@@ -27,7 +27,7 @@ export abstract class Node {
 
   abstract clone (): this;
 
-  static cloneChildNodes (node: Node) {
+  static cloneChildNodes (node: Node): Node[] | undefined {
     return node.childNodes
       ? node.childNodes.map((node) => node.clone())
       : node.childNodes;

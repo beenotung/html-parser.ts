@@ -46,7 +46,7 @@ abstract class Node {
     childNodes?: Node[];
     forEachChildNode(f: (node: Node, idx: number, childNodes: Node[]) => void): void;
     abstract clone(): this;
-    static cloneChildNodes(node: Node): Node[];
+    static cloneChildNodes(node: Node): Node[] | undefined;
 }
 class Text extends Node {}
 interface Attr {
