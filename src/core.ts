@@ -26,6 +26,12 @@ export abstract class Node {
   }
 
   abstract clone (): this;
+
+  static cloneChildNodes (node: Node) {
+    return node.childNodes
+      ? node.childNodes.map((node) => node.clone())
+      : node.childNodes;
+  }
 }
 
 export interface NodeConstructor<T extends Node> {
@@ -137,9 +143,7 @@ export class Text extends Node {
   clone (): this {
     const node = newObject(this);
     node.outerHTML = this.outerHTML;
-    node.childNodes = node.childNodes
-      ? this.childNodes.slice()
-      : this.childNodes;
+    node.childNodes = Node.cloneChildNodes(this);
     return node;
   }
 
@@ -311,10 +315,10 @@ export class Attributes extends Node {
 
   clone (): this {
     const node = newObject(this);
-    node.attrs = this.attrs.slice();
-    node.childNodes = node.childNodes
-      ? this.childNodes.slice()
-      : this.childNodes;
+    node.attrs = this.attrs.map((attr) =>
+      typeof attr === 'string' ? attr : { ...attr },
+    );
+    node.childNodes = Node.cloneChildNodes(this);
     return node;
   }
 
@@ -590,14 +594,15 @@ export class HTMLElement extends Node {
     node.noBody = this.noBody;
     node.attributes = this.attributes.clone();
     node.notClosed = this.notClosed;
-    if (this.childNodes) {
-      node.childNodes = this.childNodes.map((child) => {
-        if (child instanceof HTMLElement) {
-          child.parentElement = node;
-        }
-        return child;
-      });
-    }
+    node.childNodes = this.childNodes
+      ? this.childNodes.map((child) => {
+          child = child.clone();
+          if (child instanceof HTMLElement) {
+            child.parentElement = node;
+          }
+          return child;
+        })
+      : this.childNodes;
     return node;
   }
 
@@ -913,9 +918,7 @@ export class Comment extends Command {
   clone (): this {
     const node = newObject(this);
     node.content = this.content;
-    node.childNodes = node.childNodes
-      ? this.childNodes.slice()
-      : this.childNodes;
+    node.childNodes = Node.cloneChildNodes(this);
     return node;
   }
 
@@ -1035,9 +1038,7 @@ export abstract class DSLElement extends HTMLElement {
   clone (): this {
     const node = newObject(this);
     node.textContent = this.textContent;
-    node.childNodes = node.childNodes
-      ? this.childNodes.slice()
-      : this.childNodes;
+    node.childNodes = Node.cloneChildNodes(this);
     return node;
   }
 }
@@ -1309,9 +1310,7 @@ export class Document extends Node {
 
   clone (): this {
     const node = newObject(this);
-    node.childNodes = node.childNodes
-      ? this.childNodes.slice()
-      : this.childNodes;
+    node.childNodes = Node.cloneChildNodes(this);
     return node;
   }
 
