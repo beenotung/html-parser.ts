@@ -69,7 +69,9 @@ export function walkNodeReversed (
   const stack: Array<{ node: Node; parent: Node; idx: number }> = [];
   walkNode(
     node,
-    (node, parent, idx) => stack.push({ node, parent, idx }),
+    (node, parent, idx) => {
+      stack.push({ node, parent, idx });
+    },
     parent,
   );
   for (let i = stack.length; i > 0; i--) {
