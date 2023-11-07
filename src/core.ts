@@ -247,6 +247,113 @@ function parseString (html: string, deliminator: string): ParseResult<string> {
   return { res: res.substr(1), data: acc };
 }
 
+// reference: https://www.w3.org/wiki/Common_HTML_entities_used_for_typography
+const htmlEscapeChars: Array<{
+  literal: string;
+  alphanumeric: string;
+  unicode: string;
+}> = [];
+[
+  // ['Literal', 'Alphanumeric value', 'Unicode value'],
+  ['¢', '&cent;'],
+  ['£', '&pound;'],
+  ['§', '&sect;'],
+  ['©', '&copy;'],
+  ['« »', '&laquo; &raquo;'],
+  ['®', '&reg;'],
+  ['°', '&deg;'],
+  ['±', '&plusmn;'],
+  ['¶', '&para;'],
+  ['·', '&middot;'],
+  ['½', '&frac12;'],
+  ['–', '&ndash;'],
+  ['—', '&mdash;'],
+  ['‘ ’', '&lsquo; &rsquo;'],
+  ['‚', '&sbquo;'],
+  ['“ ”', '&ldquo; &rdquo;'],
+  ['„', '&bdquo;'],
+  ['† ‡', '&dagger; &Dagger;'],
+  ['•', '&bull;'],
+  ['…', '&hellip;'],
+  ['′ ″', '&prime; &Prime;'],
+  ['€', '&euro;'],
+  ['™', '&trade;'],
+  ['≈', '&asymp;'],
+  ['≠', '&ne;'],
+  ['≤ ≥', '&le; &ge;'],
+  ['< >', '&lt; &gt;'],
+  ["'", '&apos;'],
+  ['"', '&quot;'],
+].forEach((tuple) => {
+  const alphanumerics = tuple[1].split(' ');
+  tuple[0].split(' ').forEach((literal, i) => {
+    htmlEscapeChars.push({
+      literal,
+      alphanumeric: alphanumerics[i],
+      unicode: `&#${literal.charCodeAt(0)};`,
+    });
+  });
+});
+
+function parseHTMLString (
+  html: string,
+  deliminator: string,
+): ParseResult<string> {
+  const head = html[0];
+  assert(
+    head === deliminator,
+    `expect string quote ${s(deliminator)}, got ${s(head)}`,
+  );
+  let acc = '';
+  char_loop: for (let i = 1; i < html.length; i++) {
+    const char = html[i];
+    if (char === '&') {
+      if (html.startsWith('&amp;', i)) {
+        acc += '&';
+        i += '&amp;'.length - 1;
+        continue char_loop;
+      }
+      if (html[i + 1] === '#') {
+        const code = parseInt(html.slice(i + 2), 10);
+        const newI = i + 2 + String(code).length;
+        if (html[newI] === ';') {
+          acc += String.fromCharCode(code);
+          i = newI + 1;
+          continue char_loop;
+        }
+      }
+      for (const escapeChar of htmlEscapeChars) {
+        if (html.startsWith(escapeChar.alphanumeric, i)) {
+          acc += escapeChar.literal;
+          i += escapeChar.alphanumeric.length - 1;
+          continue char_loop;
+        }
+      }
+    }
+    if (char === deliminator) {
+      return { res: html.substring(i + 1), data: acc };
+    }
+    acc += char;
+  }
+  throw new Error(
+    'missing terminating string deliminator ' + JSON.stringify(deliminator),
+  );
+}
+
+function escapeHTMLString (text: string, deliminator: string): string {
+  text = text.replace(/&/g, '&amp;');
+  for (const escapeChar of htmlEscapeChars) {
+    if (deliminator === '"' && escapeChar.literal === "'") {
+      continue;
+    }
+    if (deliminator === "'" && escapeChar.literal === '"') {
+      continue;
+    }
+    text = text.split(escapeChar.literal).join(escapeChar.alphanumeric);
+  }
+  return text;
+}
+
 function parseAttrWhitespace (html: string): ParseResult<string> {
   const c = html[0];
   switch (c) {
@@ -273,12 +380,16 @@ function parseAttrWhitespace (html: string): ParseResult<string> {
   }
 }
 
-function parseAttrValue (html: string): ParseResult<string> {
+function parseAttrValue (
+  html: string,
+): ParseResult<{ value: string; deliminator: string }> {
   const c = html[0];
   switch (c) {
     case '"':
-    case "'":
-      return parseString(html, c);
+    case "'": {
+      const { res, data } = parseHTMLString(html, c);
+      return { res, data: { value: data, deliminator: c } };
+    }
     case '/': {
       let acc = c;
       const { res } = forChar(html.substr(1), (c, i, html) => {
@@ -295,10 +406,12 @@ function parseAttrValue (html: string): ParseResult<string> {
         }
         acc += c;
       });
-      return { res, data: acc };
+      return { res, data: { value: acc, deliminator: '' } };
     }
-    default:
-      return parseTagName(html);
+    default: {
+      const { res, data } = parseTagName(html);
+      return { res, data: { value: data, deliminator: '' } };
+    }
   }
 }
 
@@ -307,6 +420,7 @@ export interface Attr {
   extraAfterName?: string;
   extraBeforeValue?: string;
   value?: string;
+  deliminator?: string;
 }
 
 export class Attributes extends Node {
@@ -333,6 +447,7 @@ export class Attributes extends Node {
       } else {
         const attr: Attr = attrOrSpace;
         const { name, extraAfterName, extraBeforeValue, value } = attr;
+        const deliminator = attr.deliminator || '';
         html += name;
         if (typeof extraAfterName === 'string') {
           html += extraAfterName;
@@ -342,7 +457,8 @@ export class Attributes extends Node {
           if (typeof extraBeforeValue === 'string') {
             html += extraBeforeValue;
           }
-          html += value;
+          const val = escapeHTMLString(value, deliminator);
+          html += `${deliminator}${val}${deliminator}`;
         }
       }
     });
@@ -358,7 +474,9 @@ export class Attributes extends Node {
       const { name, value } = attr;
       html += ' ' + name;
       if (typeof value === 'string') {
-        html += '=' + value;
+        const deliminator = attr.deliminator || '';
+        const val = escapeHTMLString(value, deliminator);
+        html += `=${deliminator}${val}${deliminator}`;
       }
     });
     return html;
@@ -396,14 +514,6 @@ export class Attributes extends Node {
     const value = attr.value;
     if (!value) {
       return;
-    }
-    const c = value[0];
-    if (c === value[value.length - 1]) {
-      switch (c) {
-        case '"':
-        case "'":
-          return value.substring(1, value.length - 1);
-      }
     }
     return value;
   }
@@ -467,8 +577,12 @@ export class Attributes extends Node {
               attr.extraBeforeValue = whitespace.data;
               html = whitespace.res;
             }
-            const { res, data } = parseAttrValue(html);
-            attr.value = data;
+            const {
+              res,
+              data: { value, deliminator },
+            } = parseAttrValue(html);
+            attr.value = value;
+            attr.deliminator = deliminator;
             // check extra string quote
             switch (html[0]) {
               case '"':

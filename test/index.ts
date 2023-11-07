@@ -6,4 +6,5 @@ testAll([
   'examples/xhtml.html',
   'examples/extra-string-quote.html',
   'examples/multi-line-element.html',
+  'examples/escape-attribute-quote.html',
 ]);
