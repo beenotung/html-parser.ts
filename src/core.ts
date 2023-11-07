@@ -47,7 +47,7 @@ const dev = console.log.bind(console, '[parser]');
 
 /* tslint:enable:no-unused-variable */
 
-export type WalkResult = unknown | 'skip_child';
+export type WalkResult = void | 'skip_child' | Promise<void | 'skip_child'>;
 
 export function walkNode (
   node: Node,
