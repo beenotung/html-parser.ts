@@ -710,6 +710,7 @@ export class HTMLElement extends Node {
     node.noBody = this.noBody;
     node.attributes = this.attributes?.clone();
     node.notClosed = this.notClosed;
+    node.extraClosing = this.extraClosing;
     node.childNodes = this.childNodes
       ? this.childNodes.map((child) => {
           child = child.clone();
@@ -1165,6 +1166,11 @@ export abstract class DSLElement extends HTMLElement {
 
   clone (): this {
     const node = newObject(this);
+    node.tagName = this.tagName;
+    node.noBody = this.noBody;
+    node.attributes = this.attributes?.clone();
+    node.notClosed = this.notClosed;
+    node.extraClosing = this.extraClosing;
     node.textContent = this.textContent;
     node.childNodes = Node.cloneChildNodes(this);
     return node;

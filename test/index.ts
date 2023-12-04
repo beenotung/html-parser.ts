@@ -1,4 +1,4 @@
-import { testAll } from './main';
+import { testAll } from './main'
 
 testAll([
   'examples/min.html',
@@ -7,4 +7,5 @@ testAll([
   'examples/extra-string-quote.html',
   'examples/multi-line-element.html',
   'examples/escape-attribute-quote.html',
-]);
+  'examples/inline-style.html',
+])

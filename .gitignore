@@ -6,5 +6,6 @@ dist/
 .last
 in.html
 out.html
+cloned.html
 log.html
 *.tgz
