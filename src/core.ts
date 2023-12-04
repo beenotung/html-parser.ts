@@ -75,7 +75,7 @@ export function walkNodeReversed (
     parent,
   );
   for (let i = stack.length; i > 0; i--) {
-    const { node, parent, idx } = stack.pop();
+    const { node, parent, idx } = stack.pop()!;
     f(node, parent, idx);
   }
 }
@@ -136,7 +136,7 @@ function assert (b: boolean, error) {
 }
 
 function newObject<T> (o: T): T {
-  return new (o.constructor as any)();
+  return new (o as any).constructor();
 }
 
 export class Text extends Node {
@@ -493,7 +493,7 @@ export class Attributes extends Node {
   toObject (): Record<string, string> {
     const attrs: Record<string, string> = {};
     this.forEachAttr((attr) => {
-      attrs[attr.name] = attr.value;
+      attrs[attr.name] = attr.value!;
     });
     return attrs;
   }
@@ -708,7 +708,7 @@ export class HTMLElement extends Node {
     const node = newObject(this);
     node.tagName = this.tagName;
     node.noBody = this.noBody;
-    node.attributes = this.attributes.clone();
+    node.attributes = this.attributes?.clone();
     node.notClosed = this.notClosed;
     node.childNodes = this.childNodes
       ? this.childNodes.map((child) => {
@@ -737,7 +737,9 @@ export class HTMLElement extends Node {
       );
     }
     let html = `<${this.tagName}`;
-    html += this.attributes.outerHTML;
+    if (this.attributes) {
+      html += this.attributes.outerHTML;
+    }
     if (this.noBody) {
       html += '/>';
       return html;
@@ -755,7 +757,9 @@ export class HTMLElement extends Node {
       return '' + (this.childNodes || []).map((node) => node.outerHTML).join('');
     }
     let html = `<${this.tagName}`;
-    html += this.attributes.minifiedOuterHTML;
+    if (this.attributes) {
+      html += this.attributes.minifiedOuterHTML;
+    }
     if (this.noBody) {
       html += '/>';
       return html;
@@ -796,14 +800,14 @@ export class HTMLElement extends Node {
   }
 
   hasText (): boolean {
-    return (
-      this.childNodes &&
-      this.childNodes.some(
+    if (this.childNodes) {
+      return this.childNodes.some(
         (node) =>
           node instanceof Text ||
           (node instanceof HTMLElement && node.hasText()),
-      )
-    );
+      );
+    }
+    return false;
   }
 
   /**
@@ -994,14 +998,18 @@ export class Command extends HTMLElement {
 
   get outerHTML (): string {
     let html = `<!${this.tagName}`;
-    html += this.attributes.outerHTML;
+    if (this.attributes) {
+      html += this.attributes.outerHTML;
+    }
     html += `>`;
     return html;
   }
 
   get minifiedOuterHTML (): string {
     let html = `<!${this.tagName}`;
-    html += this.attributes.minifiedOuterHTML;
+    if (this.attributes) {
+      html += this.attributes.minifiedOuterHTML;
+    }
     html += '>';
     return html;
   }
@@ -1125,7 +1133,9 @@ export abstract class DSLElement extends HTMLElement {
 
   get outerHTML (): string {
     let html = `<${this.tagName}`;
-    html += this.attributes.outerHTML;
+    if (this.attributes) {
+      html += this.attributes.outerHTML;
+    }
     if (this.noBody) {
       html += '/>';
       return html;
@@ -1138,7 +1148,9 @@ export abstract class DSLElement extends HTMLElement {
 
   get minifiedOuterHTML (): string {
     let html = `<${this.tagName}`;
-    html += this.attributes.minifiedOuterHTML;
+    if (this.attributes) {
+      html += this.attributes.minifiedOuterHTML;
+    }
     if (this.noBody) {
       html += '/>';
       return html;
@@ -1402,10 +1414,7 @@ function continueParseScriptFromHTMLElement (
     return { res: html, data: script };
   }
   const closeTagHTML = `</${node.tagName}>`;
-  if (
-    script.attributes.hasName('type') &&
-    script.attributes.getValue('type') === 'application/json'
-  ) {
+  if (script.attributes?.getValue('type') === 'application/json') {
     const { res, data } = parseJSONScriptBody(html, closeTagHTML);
     script.textContent = data;
     html = res;
@@ -1426,7 +1435,7 @@ export class Document extends Node {
 
   clone (): this {
     const node = newObject(this);
-    node.childNodes = Node.cloneChildNodes(this);
+    node.childNodes = Node.cloneChildNodes(this) || [];
     return node;
   }
 

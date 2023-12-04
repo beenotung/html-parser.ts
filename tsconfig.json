@@ -8,6 +8,7 @@
     "experimentalDecorators": true,
     "noImplicitThis": true,
     "skipLibCheck": true,
+    "strictNullChecks": true,
     "lib": [
       "dom",
       "es2015"
