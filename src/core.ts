@@ -526,9 +526,7 @@ export class Attributes extends Node {
         return;
       }
     }
-    if (this.attrs.length > 0) {
-      this.attrs.push(' ');
-    }
+    this.attrs.push(' ');
     this.attrs.push({ name, value, deliminator });
   }
 
