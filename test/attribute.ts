@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs'
 import { HTMLElement, parseHtmlDocument } from '../src'
 import { test } from 'node:test'
+import * as assert from 'node:assert'
 
 test('escape attribute string', () => {
   let html = readFileSync('examples/escape-attribute-quote.html').toString()
@@ -13,20 +14,23 @@ test('escape attribute string', () => {
   let div3 = elements[2] as HTMLElement
 
   let title = div1.attributes?.getValue('title')
-  console.assert(
-    title == '/ normal text \\',
+  assert.equal(
+    title,
+    '/ normal text \\',
     "should not escape string by '\\' but got " + JSON.stringify(title),
   )
 
   title = div2.attributes?.getValue('title')
-  console.assert(
-    title == `"'double'"`,
+  assert.equal(
+    title,
+    `"'double'"`,
     'should escape string with &quot; but got ' + JSON.stringify(title),
   )
 
   title = div3.attributes?.getValue('title')
-  console.assert(
-    title == 'a&b',
+  assert.equal(
+    title,
+    'a&b',
     'should not escape when not needed but got ' + JSON.stringify(title),
   )
 })
@@ -38,13 +42,10 @@ test('add attribute', () => {
 
   let doc = parseHtmlDocument(input)
   let a: HTMLElement = doc.childNodes[0] as any
-  console.assert(
-    a.outerHTML === input,
-    'the a should be parsed and reconstructed',
-  )
+  assert.equal(a.outerHTML, input, 'the a should be parsed and reconstructed')
 
   a.setAttribute('href', href)
-  console.assert(a.outerHTML === expected, 'the href should be updated')
+  assert.equal(a.outerHTML, expected, 'the href should be updated')
 })
 
 test('update attribute', () => {
@@ -54,11 +55,8 @@ test('update attribute', () => {
 
   let doc = parseHtmlDocument(input)
   let a: HTMLElement = doc.childNodes[0] as any
-  console.assert(
-    a.outerHTML === input,
-    'the a should be parsed and reconstructed',
-  )
+  assert.equal(a.outerHTML, input, 'the a should be parsed and reconstructed')
 
   a.setAttribute('href', href)
-  console.assert(a.outerHTML === expected, 'the href should be updated')
+  assert.equal(a.outerHTML, expected, 'the href should be updated')
 })
