@@ -768,7 +768,9 @@ export class HTMLElement extends Node {
 
   get minifiedOuterHTML (): string {
     if (this.extraClosing) {
-      return '' + (this.childNodes || []).map((node) => node.outerHTML).join('');
+      return (
+        '' + (this.childNodes || []).map((node) => node.outerHTML).join('')
+      );
     }
     let html = `<${this.tagName}`;
     if (this.attributes) {
@@ -907,10 +909,7 @@ export class HTMLElement extends Node {
                 level: parseLevel,
                 /* tslint:enable:no-use-before-declare */
                 expect: selfCloseTagHtml,
-                html: html
-                  .substr(0, 10)
-                  .replace(/>.*/g, '>')
-                  .split('\n')[0],
+                html: html.substr(0, 10).replace(/>.*/g, '>').split('\n')[0],
               });
             }
             const { res, data } = HTMLElement.parse(html);
@@ -1559,7 +1558,7 @@ export let parseHtml = parseHtmlDocument;
 
 /* for debug */
 export function wrapNode (node: Node) {
-  const constructor = ((node as any) as HTMLElement)
+  const constructor = (node as any as HTMLElement)
     .constructor as NodeConstructor<any>;
   const name = constructor.name;
   return {
