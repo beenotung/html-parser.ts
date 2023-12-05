@@ -60,3 +60,27 @@ test('update attribute', () => {
   a.setAttribute('href', href, '"')
   assert.equal(a.outerHTML, expected, 'the href should be updated')
 })
+
+test('add class', () => {
+  let doc = parseHtmlDocument(`<a>text</a>`)
+  let a: HTMLElement = doc.childNodes[0] as any
+  assert.equal(
+    a.outerHTML,
+    `<a>text</a>`,
+    'the a should be parsed and reconstructed',
+  )
+
+  a.addClass('a b')
+  assert.equal(
+    a.outerHTML,
+    `<a class="a b">text</a>`,
+    'the class attribute should be added',
+  )
+
+  a.addClass('c')
+  assert.equal(
+    a.outerHTML,
+    `<a class="a b c">text</a>`,
+    'the class attribute should be updated',
+  )
+})

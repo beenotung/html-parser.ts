@@ -865,6 +865,13 @@ export class HTMLElement extends Node {
     this.attributes.setValue(name, value, deliminator);
   }
 
+  addClass (className: string) {
+    let value = this.attributes?.getValue('class');
+    value = value ? value + ' ' + className : className;
+    const deliminator = value.includes(' ') ? '"' : undefined;
+    this.setAttribute('class', value, deliminator);
+  }
+
   static parse (html: string /* TODO ,parent:Node*/): ParseResult<Node> {
     // const originalHtml = html;
     let node: HTMLElement;
