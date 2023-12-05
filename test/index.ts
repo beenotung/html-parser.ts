@@ -1,3 +1,4 @@
+import './attribute'
 import { testAll } from './main'
 
 testAll([
