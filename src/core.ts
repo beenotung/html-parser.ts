@@ -518,6 +518,19 @@ export class Attributes extends Node {
     return value;
   }
 
+  setValue (name: string, value?: string, deliminator?: string) {
+    for (const attr of this.attrs) {
+      if (typeof attr === 'object' && attr.name === name) {
+        attr.value = value;
+        return;
+      }
+    }
+    if (this.attrs.length > 0) {
+      this.attrs.push(' ');
+    }
+    this.attrs.push({ name, value, deliminator });
+  }
+
   static parse (html: string): ParseResult<Attributes> {
     const attributes = new Attributes();
     const { res } = forChar(html, (c, i, html) => {
@@ -842,6 +855,13 @@ export class HTMLElement extends Node {
       (node !== this && isAnyTagName(node, tagNames)) ||
       (node.childNodes && node.childNodes.some((node) => f(node)));
     return f(this);
+  }
+
+  setAttribute (name: string, value?: string, deliminator?: string) {
+    if (!this.attributes) {
+      this.attributes = new Attributes();
+    }
+    this.attributes.setValue(name, value, deliminator);
   }
 
   static parse (html: string /* TODO ,parent:Node*/): ParseResult<Node> {
