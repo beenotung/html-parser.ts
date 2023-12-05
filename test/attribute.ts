@@ -44,7 +44,7 @@ test('add attribute', () => {
   let a: HTMLElement = doc.childNodes[0] as any
   assert.equal(a.outerHTML, input, 'the a should be parsed and reconstructed')
 
-  a.setAttribute('href', href)
+  a.setAttribute('href', href, '"')
   assert.equal(a.outerHTML, expected, 'the href should be updated')
 })
 
@@ -57,6 +57,6 @@ test('update attribute', () => {
   let a: HTMLElement = doc.childNodes[0] as any
   assert.equal(a.outerHTML, input, 'the a should be parsed and reconstructed')
 
-  a.setAttribute('href', href)
+  a.setAttribute('href', href, '"')
   assert.equal(a.outerHTML, expected, 'the href should be updated')
 })
