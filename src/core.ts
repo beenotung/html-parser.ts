@@ -522,6 +522,7 @@ export class Attributes extends Node {
     for (const attr of this.attrs) {
       if (typeof attr === 'object' && attr.name === name) {
         attr.value = value;
+        attr.deliminator = deliminator;
         return;
       }
     }
