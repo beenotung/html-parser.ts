@@ -36,10 +36,10 @@
   "dependencies": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/beenotung/html-parser.git"
+    "url": "git+https://github.com/beenotung/html-parser.ts.git"
   },
   "bugs": {
-    "url": "https://github.com/beenotung/html-parser/issues"
+    "url": "https://github.com/beenotung/html-parser.ts/issues"
   },
-  "homepage": "https://github.com/beenotung/html-parser#readme"
+  "homepage": "https://github.com/beenotung/html-parser.ts#readme"
 }
