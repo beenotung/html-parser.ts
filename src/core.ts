@@ -42,10 +42,8 @@ export interface NodeConstructor<T extends Node> {
   parse (html: string): ParseResult<T>;
 }
 
-/* tslint:disable:no-unused-variable */
+// @ts-expect-error
 const dev = console.log.bind(console, '[parser]');
-
-/* tslint:enable:no-unused-variable */
 
 export type WalkResult = void | 'skip_child' | Promise<void | 'skip_child'>;
 

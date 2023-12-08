@@ -4,6 +4,7 @@
     "allowJs": false,
     "sourceMap": false,
     "declaration": true,
+    "noUnusedLocals": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "noImplicitThis": true,
